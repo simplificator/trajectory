@@ -10,18 +10,17 @@ class PointsGenerator
 
   def generate
     previous = nil
-    points = (0..number_of_points).map do
+    points = (0...number_of_points).map do
       if previous
         previous = random_point_not_on_line(previous)
       else
         previous = random_point
       end
     end
-
+    #raise points.size.to_s
     points_json = points.each_with_index.map do |item, index|
       build_point(item, index)
     end
-
     lines_json = points_json.each_cons(2).map do |p1, p2|
       build_line(p1, p2)
     end
@@ -33,7 +32,7 @@ class PointsGenerator
 
   def build_line(p1, p2)
     {
-      'type' => 'trajectory/detected', 'sequence' => 0, 'created_at' => Time.now, 'source' => p1['source'], 'data' => {
+      'type' => 'trajectory/detected', 'source' => p1['source'], 'data' => {
         'x1' => p1['data']['x'],
         'y1' => p1['data']['y'],
         'x2' => p2['data']['x'],
@@ -41,13 +40,12 @@ class PointsGenerator
         't1' => p1['created_at'],
         't2' => p2['created_at'],
       }
-
     }
 
   end
 
   def build_point(item, index)
-    {'type' => 'ball/detected', 'sequence' => index, 'created_at' => Time.now, 'source' => 'generator', 'data' => {
+    {'type' => 'ball/detected', 'created_at' => Time.now, 'source' => 'generator', 'data' => {
         'x' => item[0],
         'y' => item[1]
         }}
@@ -68,7 +66,3 @@ class PointsGenerator
     point
   end
 end
-
-
-g = PointsGenerator.new(:number_of_points => 10)
-p g.generate

@@ -4,7 +4,7 @@ RSpec.describe Trajectory::VectorAngle do
 
 
   it 'does stuff' do
-    points, lines_expected = PointsGenerator.new(:number_of_points => 3)
+    points, lines_expected = PointsGenerator.new(:number_of_points => 3).generate
     algo = Trajectory::VectorAngle.new
     cons = Trajectory::Consumer.new(algo)
 
@@ -17,7 +17,12 @@ RSpec.describe Trajectory::VectorAngle do
       cons.point_received(point)
     end
 
-    p result
+
+    expect(result.length).to eq(lines_expected.length)
+
+    lines_expected.each_with_index do |item, index|
+      expect(result[index]).to eq(item)
+    end
 
   end
 end

@@ -12,11 +12,12 @@ class Trajectory::VectorAngle
     if previous_points.size <= 2
       return nil
     end
-
+    p "points #{previous_points.size}: #{previous_points[-2..-1]}"
     if !do_points_form_line?
-      last_point = previous_points.pop
       line = generate_line
-      previous_points = [last_point]
+      p "prev: #{previous_points}"
+      previous_points = previous_points[-2..-1]
+      puts "after: #{previous_points.size}"
       line
     else
       nil
@@ -31,7 +32,7 @@ class Trajectory::VectorAngle
 
     {
       'type' => 'trajectory/detected',
-      'source' => point['source'],
+      'source' => start_point['source'],
       'data' => {
         'x1' => start_point['data']['x'],
         'y1' => start_point['data']['y'],
@@ -66,7 +67,7 @@ class Trajectory::VectorAngle
 
   def radiant_angle(vector1, vector2)
     angle = Math.atan2(vector2[1], vector2[0]) - Math.atan2(vector1[1], vector1[0])
-    Math.abs(angle)
+    angle.abs
   end
 
   attr_accessor :previous_points
